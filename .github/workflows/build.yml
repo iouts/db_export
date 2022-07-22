@@ -2,13 +2,12 @@ on:
   release:
     types: [created]
   push:
-
+    branches: main
 
 jobs:
   release:
-    name: release ${{ matrix.target }} (with non-required env)
+    name: release ${{ matrix.target }}
     runs-on: ubuntu-latest
-    if: github.event_name == 'release'
     strategy:
       fail-fast: false
       matrix:
@@ -20,7 +19,7 @@ jobs:
           - target: x86_64-apple-darwin
             archive: zip
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       - name: Compile and release
         uses: rust-build/rust-build.action@master
         env:
