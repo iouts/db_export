@@ -24,12 +24,14 @@ async fn main() {
     let mut hs = Vec::new();
     while let Some(row) = cursor.next().unwrap() {
         let title = row[0].as_string().unwrap().to_owned();
-        let data = row[1].as_binary().unwrap().to_vec();
-        let out = args[2].to_string();
-        let h = tokio::spawn(async move {
-            process(data, &title, &out).await;
-        });
-        hs.push(h);
+        if let Some(b) = row[1].as_binary() {
+            let data = b.to_vec();
+            let out = args[2].to_string();
+            let h = tokio::spawn(async move {
+                process(data, &title, &out).await;
+            });
+            hs.push(h);
+        }
     }
 
     for h in hs {
