@@ -71,7 +71,7 @@ async fn extract_images(input: &[u8], title: &str, out_folder: &str) {
                         Ok(img) => {
                             index += 1;
                             let mut name = String::new();
-                            name.push_str(&title.replace(".", "_"));
+                            name.push_str(&title.replace(".", "_").replace("?", "_"));
                             name.push_str("_");
                             name.push_str(&index.to_string());
                             let o;
