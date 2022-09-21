@@ -40,10 +40,11 @@ async fn main() {
 async fn process(data: Vec<u8>, title: &str, out_folder: &str) {
     let mut buf: Vec<u8> = Vec::new();
     match decompress_zlib(&data, &mut buf) {
-        Ok(_) => (),
+        Ok(_) => {
+            extract_images(&buf, title, out_folder).await;
+        }
         Err(e) => println!("decompress error: {}", e),
     };
-    extract_images(&buf, title, out_folder).await;
 }
 
 fn decompress_zlib(input: &[u8], output: &mut Vec<u8>) -> Result<usize, std::io::Error> {
