@@ -22,16 +22,14 @@ async fn main() {
     let conn = sqlite::open(db_path).unwrap();
     let mut cursor = conn.prepare(SQL_QUERY).unwrap().into_cursor();
     let mut hs = Vec::new();
-    while let Some(row) = cursor.next().unwrap() {
-        let title = row[0].as_string().unwrap().to_owned();
-        if let Some(b) = row[1].as_binary() {
-            let data = b.to_vec();
-            let out = args[2].to_string();
-            let h = tokio::spawn(async move {
-                process(data, &title, &out).await;
-            });
-            hs.push(h);
-        }
+    while let Some(Ok(row)) = cursor.next() {
+        let title = row.get::<String, _>(0);
+        let data = row.get::<Vec<u8>, _>(1);
+        let out = args[2].to_string();
+        let h = tokio::spawn(async move {
+            process(data, &title, &out).await;
+        });
+        hs.push(h);
     }
 
     for h in hs {
