@@ -22,9 +22,9 @@ async fn main() {
     let conn = sqlite::open(db_path).unwrap();
     let mut cursor = conn.prepare(SQL_QUERY).unwrap().into_cursor();
     let mut hs = Vec::new();
-    while let Some(Ok(row)) = cursor.next() {
-        let title = row.get::<String, _>(0);
-        let data = row.get::<Vec<u8>, _>(1);
+    while let Ok(Some(row)) = cursor.next() {
+        let title = row[0].as_string().unwrap().to_string();
+        let data = row[1].as_binary().unwrap().to_vec();
         let out = args[2].to_string();
         let h = tokio::spawn(async move {
             process(data, &title, &out).await;
